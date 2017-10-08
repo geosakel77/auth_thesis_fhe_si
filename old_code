@@ -1,0 +1,137 @@
+
+    unsigned p=23;
+    unsigned g=7;
+    unsigned logQ=117;
+
+    Matrix<ZZ> rawData;
+    vector<ZZ> labels;
+    unsigned dim;
+
+    if (!LoadData(rawData, labels, dim, "../sample.dat")) {
+        return 1;
+    }
+    std::cout<<"The dimension of data points is:"<<std::endl;
+    std::cout<<dim<<std::endl;
+    std::cout<<"The labels of data points are:"<<std::endl;
+    for(auto item = labels.begin();item !=labels.end();item++){
+        std::cout<<*item<<' ';
+    }
+    std::cout<<'\n'<<std::endl;
+
+    std::cout<<"The points are:"<<std::endl;
+
+    std::cout<<rawData<<std::endl;
+
+    std::cout<<"------------------------------"<<std::endl;
+    std::cout<<"Keys Generation"<<std::endl;
+    unsigned xi= calculateXI(p, static_cast<unsigned int>(labels.size()), dim);
+
+    logQ = calculatelogQ(p,xi,dim);
+
+    std::cout<<"The value of logQ is :"<<logQ<<std::endl;
+
+    FHEcontext context(p-1,logQ,p,g,3);
+    activeContext =&context;
+    context.SetUpSIContext();
+
+    std::cout<<context<<std::endl;
+
+    //runTest(true,18000,p,context);
+
+
+    FHESISecKey fhesiSecKey(context);
+    const FHESIPubKey &fhesiPubKey(fhesiSecKey);
+
+    ZZ p1 = to_ZZ(context.ModulusP());
+    Plaintext ptx1(context,to_ZZ(rawData[1][2])%p1);
+    Ciphertext cipht1(fhesiPubKey);
+    fhesiPubKey.Encrypt(cipht1,ptx1);
+    Plaintext ptx11;
+    fhesiSecKey.Decrypt(ptx11,cipht1);
+
+    const FHESIPubKey &fhesiPubKey(fhesiSecKey);
+
+    KeySwitchSI keySwitchSI(fhesiSecKey);
+    std::cout<<"------------------------------"<<std::endl;
+    std::cout<<"Paintext Format"<<std::endl;
+
+
+    ZZ p1 = to_ZZ(context.ModulusP());
+    std::cout<<p1<<std::endl;
+    unsigned batchSize = context.GetPlaintextSpace().GetUsableSlots();
+    std::cout<<batchSize<<std::endl;
+    Matrix<Plaintext> ptxtBlocks= Matrix<Plaintext>();
+    vector<Plaintext> ptxtBlockSizes = vector<Plaintext>();
+    ptxtBlocks.Clear();
+    ptxtBlockSizes.clear();
+
+    for (unsigned i = 0; i < rawData.NumRows(); i += batchSize) {
+        vector<Plaintext> row;
+        unsigned n = 0;
+
+        for (unsigned j = 0; j < rawData.NumCols(); j++) {
+            vector<ZZ> columnBatch;
+            for (unsigned k = i; ((k < i + batchSize) && (k < rawData.NumRows())); k++) {
+                std::cout<<to_ZZ(rawData[k][j])<< ",";
+                std::cout<<to_ZZ(rawData[k][j]) % p1<<std::endl;
+                columnBatch.push_back(to_ZZ(rawData[k][j]) % p1);
+            }
+            n = columnBatch.size();
+            row.push_back(Plaintext(context, columnBatch));
+        }
+
+        ptxtBlocks.AddRow(row);
+        ptxtBlockSizes.push_back(Plaintext(context, n));
+
+    }
+
+    std::cout<<ptxtBlocks<<std::endl;
+
+    Matrix<Plaintext> ptData;
+    std::cout<<rawData.NumCols()<<","<<rawData.NumRows()<<std::endl;
+    for (unsigned i=0; i<rawData.NumRows();i++){
+        vector<Plaintext> ptrow;
+        vector<ZZ> row;
+        for (unsigned j=0; j<rawData.NumCols();j++){
+
+            //std::cout<<rawData[i][j]<<", "<<to_ZZ(rawData[i][j])<<", "<< to_ZZ_pX(rawData[i][j])<<", "
+            //         <<to_ZZ(rawData[i][j])%p1<<", "<<to_ZZ_pX(p1)<<std::endl;
+            std::cout<<rawData[i][j]<<", "<<to_ZZ(rawData[i][j])%p1<<std::endl;
+            row.push_back(to_ZZ(rawData[i][j])%p1);
+        }
+        for(unsigned k=0 ;k<row.size();k++){
+            std::cout<<row[k]<<",";
+        }
+        std::cout<<endl;
+
+        ptrow.push_back(Plaintext(context,row));
+        ptData.AddRow(ptrow);
+        std::cout<<"------------------"<<endl;
+        row.clear();
+        //Plaintext ptrow(context,row);
+    }
+
+    std::cout<<ptData<<std::endl;
+
+
+    Plaintext ptx1(context,to_ZZ(rawData[1][2])%p1);
+    Plaintext ptx2(context,to_ZZ(rawData[1][3])%p1);
+
+    Plaintext sumptx, ptx11;
+    std::cout<<"Plaintext data:"<<rawData[1][2]<<", "<<rawData[1][3]<<", "<<std::endl;
+    std::cout<<"Plaintext addition:"<<rawData[1][2]+rawData[1][3]<<std::endl;
+    Ciphertext cipht1(fhesiPubKey);
+    Ciphertext cipht2(fhesiPubKey);
+    Ciphertext sumcipht;
+    fhesiPubKey.Encrypt(cipht1,ptx1);
+    fhesiPubKey.Encrypt(cipht2,ptx2);
+
+
+    std::cout<<"Ciphertext data:"<<cipht1<<", "<< cipht2<<std::endl;
+    sumcipht = cipht1;
+    sumcipht+=cipht2;
+    const Ciphertext sumconstC = sumcipht;
+    std::cout<<"Ciphertext sum:"<<sumcipht<<std::endl;
+    fhesiSecKey.Decrypt(sumptx,sumconstC);
+
+
