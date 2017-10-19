@@ -3,7 +3,8 @@ project(auth_thesis_fhe_si)
 
 set(CMAKE_CXX_STANDARD 11)
 include_directories(/usr/local/include/FHESI)
-set(SOURCE_FILES main1.cpp helpfunctions.cpp )
+include_directories(/usr/local/include/NTL)
+set(SOURCE_FILES  helpfunctions.cpp main2.cpp)
 
 
 add_executable(auth_thesis_fhe_si ${SOURCE_FILES})

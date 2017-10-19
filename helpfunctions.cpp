@@ -127,6 +127,43 @@ bool LoadDataPolyX(vector<ZZ_pX> &rawData, vector<ZZ_p> &labels, unsigned &dim, 
 
 
 
+ZZ_pX numbertoZZ_pX(long &number, FHEcontext &econtext) {
+    ZZ_pX data;
+    auto size = static_cast<unsigned int>(to_int(econtext.ModulusP()));
+    for(unsigned int i=0; i<size;i++){
+        SetCoeff(data,i,to_ZZ_p(bitset<16>(number)[i]));
+    }
+
+    return data;
+
+}
+
+
+
+
+
+unsigned long MSB_pos(ZZ_pX &numberPoly, long vector_length) {
+    unsigned long position=0;
+
+    vec_ZZ_p coefvec = VectorCopy(numberPoly,vector_length);
+
+    for(long i=0;i<coefvec.length();i++){
+        if(coefvec[i]!=0){
+            position=i;
+        }
+
+    }
+
+    return position;
+}
+
+
+
+ZZ_pX MSB_poly(ZZ_pX &numberPoly) {
+    ZZ_pX msb_poly;
+    SetCoeff(msb_poly,MSB_pos(numberPoly),to_ZZ_p(1));
+    return msb_poly;
+}
 
 void savePublicKey(const FHESIPubKey &fhesiPubKey, const string &filename) {
     ofstream outputfile(filename);

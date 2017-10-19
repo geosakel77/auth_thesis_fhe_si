@@ -12,6 +12,8 @@
 #include <iostream>
 #include <fstream>
 #include "FHE-SI.h"
+#include <bitset>
+#include "ZZ_pX.h"
 void readdata(const std::string filename);
 unsigned calculatelogQ(unsigned const &p,unsigned xi, unsigned &dim );
 unsigned calculateXI(unsigned const &p,unsigned size, unsigned &dim);
@@ -21,7 +23,9 @@ void savePublicKey(const FHESIPubKey &fhesiPubKey, const string &filename);
 void saveSwitchedKey(const KeySwitchSI &keySwitchSI, const string &filename);
 void saveSecretKey(const FHESISecKey &fhesiSecKey, const string &filename);
 ZZ_p extraxtHM(const ZZ_pX &poly);
-
+ZZ_pX numbertoZZ_pX(long &number, FHEcontext &econtext);
+unsigned long MSB_pos(ZZ_pX &numberPoly,long vector_length=64);
+ZZ_pX MSB_poly(ZZ_pX &numberPoly);
 
 template <typename T>
 void print(const T &message){
