@@ -127,7 +127,7 @@ int main(){
     print(extraxtHM(pHM11.message));
     print(pHM12);
     print(extraxtHM(pHM12.message));
-    //savePublicKey(fhesiPubKey1,"pkey.dat");
+    savePublicKey(fhesiPubKey1,"pkey.dat");
     //saveSecretKey(fhesiSecKey,"skey.dat");
     //saveSwitchedKey(keySwitchSI1,"switchkey.dat");
 

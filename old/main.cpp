@@ -1,4 +1,4 @@
-#include "helpfunctions.h"
+#include "../helpfunctions.h"
 #include "Plaintext.h"
 #include "DoubleCRT.h"
 #include "Ciphertext.h"

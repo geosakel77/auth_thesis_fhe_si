@@ -14,6 +14,7 @@
 #include "FHE-SI.h"
 #include <bitset>
 #include "ZZ_pX.h"
+#include "Ciphertext.h"
 void readdata(const std::string filename);
 unsigned calculatelogQ(unsigned const &p,unsigned xi, unsigned &dim );
 unsigned calculateXI(unsigned const &p,unsigned size, unsigned &dim);
@@ -24,8 +25,14 @@ void saveSwitchedKey(const KeySwitchSI &keySwitchSI, const string &filename);
 void saveSecretKey(const FHESISecKey &fhesiSecKey, const string &filename);
 ZZ_p extraxtHM(const ZZ_pX &poly);
 ZZ_pX numbertoZZ_pX(long &number, FHEcontext &econtext);
-unsigned long MSB_pos(ZZ_pX &numberPoly,long vector_length=64);
+unsigned long MSB(ZZ_pX &numberPoly,long vector_length=64);
 ZZ_pX MSB_poly(ZZ_pX &numberPoly);
+long ptToNumber(Plaintext &ptxt);
+Ciphertext FHE_Sub(Ciphertext &c1, Ciphertext &c2, Ciphertext &negCoef,KeySwitchSI &keySwitchSI);
+Plaintext binaryFHEAddTransformation(Plaintext &plaintext);
+unsigned long MSB(long &number);
+Ciphertext FHE_MSB(Ciphertext &c1, Ciphertext &c2, Ciphertext &negCoef, Ciphertext &eCoef, KeySwitchSI &keySwitchSI);
+Ciphertext FHE_MAX(Ciphertext &c1, Ciphertext &c2, Ciphertext &posCoef,Ciphertext &negCoef, Ciphertext &eCoef, KeySwitchSI &keySwitchSI);
 
 template <typename T>
 void print(const T &message){
