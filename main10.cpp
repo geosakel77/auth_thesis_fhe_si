@@ -51,6 +51,7 @@ int main(){
         distance[i]=dist;
     }
 
+
     for(int i=0;i<loadeddata.size();i++){
         Plaintext dist;
         fhesiSecKey1.Decrypt(dist,distance[i]);
@@ -60,9 +61,28 @@ int main(){
     }
 
 
+    print("------------Centroid---------------------");
+    Ciphertext total=cpoints[0];
+    for(int i=1;i<loadeddata.size();i++){
+        total+=cpoints[i];
+    }
+    Plaintext ptotal;
+    fhesiSecKey1.Decrypt(ptotal,total);
+    print(ptotal);
+    print(ptotal.message/2);
 
+    ZZ_pX centroidx =ptotal.message;
+    ZZ_pX new_centroid;
+    ZZ_p coef;
+    long mean=2;
+    for(long i=0;i<centroidx.rep.length();i++){
+        coef=coeff(centroidx,i);
+        ZZ x= rep(coef);
+        long t=to_long(x)/mean;
+        SetCoeff(new_centroid,i,t);
+    }
 
-
+    print(new_centroid);
     /*
     ZZ_pX dp0 =dHM[0].message;
     ZZ_pX dp1 =dHM[1].message;
