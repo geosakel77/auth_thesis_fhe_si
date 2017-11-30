@@ -83,7 +83,7 @@ int main(){
     }
 
     print(new_centroid);
-    /*
+
     ZZ_pX dp0 =dHM[0].message;
     ZZ_pX dp1 =dHM[1].message;
 
@@ -111,6 +111,16 @@ int main(){
     print(hmd);
     print(to_long(hmd));
     print(context.ModulusP());
-     */
+
+
+    size_t a=1014652156710223703;
+
+
+    auto l= static_cast<uint32_t>(a);
+
+    print(l);
+
+
+
     return 0;
 };

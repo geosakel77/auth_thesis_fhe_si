@@ -267,3 +267,109 @@ ZZ_p extraxtHM(const ZZ_pX &poly) {
 
     return dhm;
 }
+
+
+bool LoadDataVecPolyX(vector<vector<ZZ_pX>> &rawData, vector<ZZ_p> &labels, unsigned &dim, const string &filename,
+                      FHEcontext &context) {
+    int label, n;
+    long phim =context.zMstar.phiM();
+    ifstream fin;
+    fin.open(filename);
+    if (!fin) {
+        cout << "Unable to read data file." << endl;
+        return false;
+    }
+
+    rawData.clear();
+    labels.clear();
+
+
+    ZZ p = context.ModulusP();
+    fin >> dim >> n;
+
+
+    ZZ_pX data;
+    data.SetMaxLength(1);
+
+    long temp;
+    for (int i = 0; i < n; i++) {
+        vector<ZZ_pX> point;
+        for (unsigned j = 0; j < dim; j++) {
+            fin>> temp;
+            SetCoeff(data,0,temp);
+            point.push_back(data);
+        }
+        fin >> label;
+        rawData.push_back(point);
+        labels.push_back(to_ZZ_p(label));
+
+    }
+
+    return true;
+
+}
+
+
+vector<Ciphertext> EncryptVector(const vector<ZZ_pX> &point, const FHEcontext &fhEcontext, const FHESIPubKey &fhesiPubKey) {
+    unsigned long dimension = point.size();
+    vector<Ciphertext> encrypted_vector;
+    for(unsigned i=0; i<dimension;i++){
+        Plaintext coefficient(fhEcontext,point[i]);
+        Ciphertext encrypted_coefficient(fhesiPubKey);
+        fhesiPubKey.Encrypt(encrypted_coefficient,coefficient);
+        encrypted_vector.push_back(encrypted_coefficient);
+    }
+    return encrypted_vector;
+}
+
+
+vector<ZZ_pX> DecryptVector(const vector<Ciphertext> &cpoint, const FHESISecKey &fhesiSecKey) {
+    unsigned long dimension=cpoint.size();
+    vector<ZZ_pX> decrypted_vector;
+    for (int i = 0; i < dimension ; ++i) {
+        Plaintext coefficient;
+        fhesiSecKey.Decrypt(coefficient,cpoint[i]);
+        decrypted_vector.push_back(coefficient.message);
+    }
+    return decrypted_vector;
+}
+
+
+vector<ZZ_pX> DecryptVectorKS(const vector<Ciphertext> &cpoint, const FHESISecKey &fhesiSecKey, const KeySwitchSI &keySwitchSI) {
+    unsigned long dimension=cpoint.size();
+    vector<ZZ_pX> decrypted_vector;
+    for (int i = 0; i < dimension ; ++i) {
+        Plaintext coefficient;
+        Ciphertext encrypted_coefficient= cpoint[i];
+        keySwitchSI.ApplyKeySwitch(encrypted_coefficient);
+        fhesiSecKey.Decrypt(coefficient,encrypted_coefficient);
+        decrypted_vector.push_back(coefficient.message);
+    }
+    return decrypted_vector;
+}
+
+Ciphertext euclideanDistance(vector<Ciphertext> &cpoint1, vector<Ciphertext> &cpoint2, KeySwitchSI &keySwitchSI) {
+    Ciphertext total;
+    unsigned long dimension=cpoint1.size();
+    total=euclideanDistanceP(cpoint1[0],cpoint2[0],keySwitchSI);
+    for (int i = 1; i <dimension ; ++i) {
+        Ciphertext coefficient_distance;
+        coefficient_distance=euclideanDistanceP(cpoint1[i],cpoint2[i],keySwitchSI);
+        total+=coefficient_distance;
+    }
+    return total;
+
+}
+
+Ciphertext euclideanDistanceP(Ciphertext &c1, Ciphertext &c2, KeySwitchSI &keySwitchSI) {
+    Ciphertext total;
+    Ciphertext semi_total;
+    semi_total=c2;
+    semi_total*=-1;
+    semi_total+=c1;
+    total=semi_total;
+    total*=semi_total;
+    total.ScaleDown();
+    keySwitchSI.ApplyKeySwitch(total);
+    return total;
+}

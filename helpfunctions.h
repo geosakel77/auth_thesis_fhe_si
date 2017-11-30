@@ -33,6 +33,13 @@ Plaintext binaryFHEAddTransformation(Plaintext &plaintext);
 unsigned long MSB(long &number);
 Ciphertext FHE_MSB(Ciphertext &c1, Ciphertext &c2, Ciphertext &negCoef, Ciphertext &eCoef, KeySwitchSI &keySwitchSI);
 Ciphertext FHE_MAX(Ciphertext &c1, Ciphertext &c2, Ciphertext &posCoef,Ciphertext &negCoef, Ciphertext &eCoef, KeySwitchSI &keySwitchSI);
+bool LoadDataVecPolyX(vector<vector<ZZ_pX>> &rawData, vector<ZZ_p> &labels, unsigned &dim, const string &filename, FHEcontext &context);
+vector<Ciphertext> EncryptVector(const vector<ZZ_pX> &point, const FHEcontext &fhEcontext, const FHESIPubKey &fhesiPubKey);
+vector<ZZ_pX> DecryptVectorKS(const vector<Ciphertext> &cpoint, const FHESISecKey &fhesiSecKey, const KeySwitchSI &keySwitchSI);
+vector<ZZ_pX> DecryptVector(const vector<Ciphertext> &cpoint, const FHESISecKey &fhesiSecKey);
+
+Ciphertext euclideanDistance(vector<Ciphertext> &cpoint1, vector<Ciphertext> &cpoint2, KeySwitchSI &keySwitchSI);
+Ciphertext euclideanDistanceP(Ciphertext &c1, Ciphertext &c2, KeySwitchSI &keySwitchSI);
 
 template <typename T>
 void print(const T &message){
