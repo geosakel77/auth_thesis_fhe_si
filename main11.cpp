@@ -9,6 +9,8 @@
 #include <map>
 using namespace std;
 int main() {
+    clock_t c_start = clock();
+    auto t_start = chrono::high_resolution_clock::now();
 
     unsigned p = 23;
     unsigned g = 7;
@@ -50,6 +52,6 @@ int main() {
     Plaintext dp;
     fhesiSecKey1.Decrypt(dp,d);
     print(dp);
-
+    timeCalulator(c_start,t_start);
     return 0;
 }

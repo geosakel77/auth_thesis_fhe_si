@@ -15,6 +15,8 @@
 #include <bitset>
 #include "ZZ_pX.h"
 #include "Ciphertext.h"
+#include <chrono>
+#include <iomanip>
 void readdata(const std::string filename);
 unsigned calculatelogQ(unsigned const &p,unsigned xi, unsigned &dim );
 unsigned calculateXI(unsigned const &p,unsigned size, unsigned &dim);
@@ -40,6 +42,8 @@ vector<ZZ_pX> DecryptVector(const vector<Ciphertext> &cpoint, const FHESISecKey 
 
 Ciphertext euclideanDistance(vector<Ciphertext> &cpoint1, vector<Ciphertext> &cpoint2, KeySwitchSI &keySwitchSI);
 Ciphertext euclideanDistanceP(Ciphertext &c1, Ciphertext &c2, KeySwitchSI &keySwitchSI);
+void timeCalulator(const clock_t &c_start, const chrono::high_resolution_clock::time_point &t_start);
+
 
 template <typename T>
 void print(const T &message){
