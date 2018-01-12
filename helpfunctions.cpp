@@ -33,7 +33,24 @@ unsigned calculatelogQ(unsigned const &p,unsigned xi, unsigned &dim ){
 
     double lgQ = 4.5*log(n)+max(1,(int) dim-1)*(log(1280)+2*log(n)+log(xi));
 
-    auto logQ = (unsigned) ceil(lgQ / log(2) + 24.7);
+
+
+
+}
+
+unsigned calculatelogQ1(unsigned const &p, unsigned &d) {
+    unsigned n=p-1;
+    double lgQ=log(3*d*pow(n,2.5));
+    auto logQ = (unsigned) ceil(lgQ / log(2) + 12);
+
+    return logQ;
+
+}
+
+unsigned calculatelogQ2(unsigned const &p, unsigned &d) {
+    unsigned n=p-1;
+    double lgQ=log(3*d*pow(n,4.5));
+    auto logQ = (unsigned) ceil(lgQ / log(2) + 22);
 
     return logQ;
 
@@ -42,10 +59,13 @@ unsigned calculatelogQ(unsigned const &p,unsigned xi, unsigned &dim ){
 unsigned calculateXI(unsigned const &p,unsigned size, unsigned &dim){
     unsigned blockSize = 1;
     unsigned val = (p-1)/2-1;
+
     while (val > 1) {
         blockSize <<= 1;
         val >>= 1;
+
     }
+
     auto nBlocks = static_cast<unsigned int>(size / blockSize);
     if (size % blockSize != 0) {
         nBlocks++;

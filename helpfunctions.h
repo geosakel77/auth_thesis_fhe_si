@@ -17,6 +17,9 @@
 #include "Ciphertext.h"
 #include <chrono>
 #include <iomanip>
+
+unsigned calculatelogQ2(unsigned const &p, unsigned &d);
+unsigned calculatelogQ1(unsigned const &p, unsigned &d);
 void readdata(const std::string filename);
 unsigned calculatelogQ(unsigned const &p,unsigned xi, unsigned &dim );
 unsigned calculateXI(unsigned const &p,unsigned size, unsigned &dim);
